@@ -12,6 +12,25 @@
 
     <artifactId>reggie_pojo</artifactId>
 
+    <dependencies>
+        <!--Lombok 是一个Java库，它通过注解帮助减少样板代码，例如自动生成getter、setter、toString等方法-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <!--jackson 是一个流行的JSON处理库，jackson-databind 模块主要用于对象与JSON之间的转换-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <!--这是一个基于Swagger的API文档增强工具，专门为Spring Boot应用设计，提供了更美观的UI界面和更多的功能扩展-->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+        </dependency>
+    </dependencies>
+
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
