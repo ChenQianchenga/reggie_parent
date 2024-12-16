@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,8 +23,10 @@ import javax.servlet.http.HttpServletResponse;
 public class JwtTokenAdminInterceptor implements HandlerInterceptor {
     @Autowired
     private JwtProperties jwtProperties;
+
     /**
      * jwt令牌的校验
+     * //目标资源方法执行前执行。 返回true：放行 返回false：不放行
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -63,4 +66,17 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 //        }
 //        return true;
     }
+
+    //目标资源方法执行后执行
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        System.out.println("postHandle ... ");
+    }
+
+    //视图渲染完毕后执行，最后执行
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        System.out.println("afterCompletion .... ");
+    }
+
 }
