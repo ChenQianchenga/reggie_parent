@@ -30,12 +30,12 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("拦截到请求：{}", request.getRequestURI());
+        log.info("拦截器拦截到请求：{}", request.getRequestURI());
 
-        if (!(handler instanceof HandlerMethod)) {
-            //如果不是映射到controller某个方法的请求，则直接放行，例如请求的是/doc.html
-            return true;
-        }
+//        if (!(handler instanceof HandlerMethod)) {
+//            //如果不是映射到controller某个方法的请求，则直接放行，例如请求的是/doc.html
+//            return true;
+//        }
         return true;
 
 //        //获取请求的方法

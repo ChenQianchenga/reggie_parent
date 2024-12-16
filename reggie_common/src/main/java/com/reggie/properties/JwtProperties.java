@@ -1,6 +1,7 @@
 package com.reggie.properties;
 
 import lombok.Data;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class JwtProperties {
      * 管理端员工生成jwt令牌相关配置
      */
     @NotBlank(message = "管理端密钥不能为空")
-    private String adminSecretKey;
+    private String adminSecretKey; //这个名称要和配置里面一样
     @Min(value = 1000, message = "管理端令牌有效期必须大于 1 秒")
     private long adminTtl;
     @NotBlank(message = "管理端令牌名称不能为空")
@@ -46,3 +47,5 @@ public class JwtProperties {
     }
 
 }
+//@Value("${aliyun.oss.endpoint}")
+//@value注解通常用于外部配置的属性注入，具体用法为：@Value（"${配置文件中的key}"）
