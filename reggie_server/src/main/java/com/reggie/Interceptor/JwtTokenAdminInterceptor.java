@@ -1,5 +1,6 @@
 package com.reggie.Interceptor;
 
+import com.reggie.annotation.IgnoreToken;
 import com.reggie.constant.JwtClaimsConstant;
 import com.reggie.context.BaseContext;
 import com.reggie.properties.JwtProperties;
@@ -27,50 +28,51 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
     /**
      * jwt令牌的校验
      * //目标资源方法执行前执行。 返回true：放行 返回false：不放行
+     * handlerMethod.hasMethodAnnotation()是一个方法，通常用于检查处理器方法是否具有特定的方法级别的注解。在这种情况下，它用于检查handlerMethod是否带有IgnoreToken注解。
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info("拦截器拦截到请求：{}", request.getRequestURI());
 
-//        if (!(handler instanceof HandlerMethod)) {
-//            //如果不是映射到controller某个方法的请求，则直接放行，例如请求的是/doc.html
-//            return true;
-//        }
-        return true;
+        if (!(handler instanceof HandlerMethod)) {
+            //如果不是映射到controller某个方法的请求，则直接放行，例如请求的是/doc.html
+            return true;
+        }
 
-//        //获取请求的方法
-//        HandlerMethod handlerMethod = (HandlerMethod) handler;
-//        //判断当前被拦截的Controller方法上是否加入了IgonreToken注解
-//        boolean methodAnnotation = handlerMethod.hasMethodAnnotation(IgnoreToken.class);
-//        if (methodAnnotation) {
-//            return true;
-//        }
-//
-//
-//        //从请求头获取jwt令牌
-//        String token = request.getHeader(jwtProperties.getAdminTokenName());
-//
-//        try {
-//            Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
-//
-//            //获取员工id
-//            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-//            //将员工id存入ThreadLocal中
-//            BaseContext.setCurrentId(empId);
-//
-//        } catch (Exception e) {
-//            log.error("jwt令牌解析失败");
-//            //401代表用户没有访问权限，需要进行身份认证
-//            response.setStatus(401);
-//            return false;
-//        }
-//        return true;
+        //获取请求的方法
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        //判断当前被拦截的Controller方法上是否加入了IgonreToken注解
+        boolean methodAnnotation = handlerMethod.hasMethodAnnotation(IgnoreToken.class);
+        if (methodAnnotation) {
+            return true;
+        }
+
+
+        //从请求头获取jwt令牌
+        String token = request.getHeader(jwtProperties.getAdminTokenName());
+
+        try {
+            Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
+
+            //获取员工id
+            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
+            //将员工id存入ThreadLocal中
+            BaseContext.setCurrentId(empId);
+
+        } catch (Exception e) {
+            log.error("jwt令牌解析失败");
+            //401代表用户没有访问权限，需要进行身份认证
+            response.setStatus(401);
+            return false;
+        }
+        return true;
     }
 
     //目标资源方法执行后执行
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         System.out.println("postHandle ... ");
+        BaseContext.removeCurrentId();
     }
 
     //视图渲染完毕后执行，最后执行
