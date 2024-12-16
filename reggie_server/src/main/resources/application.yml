@@ -1,0 +1,62 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev #修改成dev
+  datasource:
+    druid:
+      driver-class-name: ${reggie.datasource.driver-class-name}
+      url: jdbc:mysql://${reggie.datasource.host}:${reggie.datasource.port}/${reggie.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${reggie.datasource.username}
+      password: ${reggie.datasource.password}
+
+  redis:
+    host: ${reggie.redis.host}
+    port: ${reggie.redis.port}
+    database: ${reggie.redis.database}
+    password: ${reggie.redis.password}
+
+mybatis:
+  #mapper配置文件指定 MyBatis 映射文件（Mapper XML 文件）的位置配置: classpath:mapper/*.xml 表示 MyBatis 会在类路径下的 mapper 目录中查找所有扩展名为 .xml 的映射文件
+  mapper-locations: classpath:mapper/*.xml
+  # 指定实体类所在的包路径配置: com.reggie.entity 表示 MyBatis 会自动扫描 com.reggie.entity 包下的所有类，并为这些类创建别名。
+  # 简化 XML 配置文件中的类名引用，避免使用全限定类名
+  type-aliases-package: com.reggie.entity
+  configuration:
+    #开启驼峰命名 将数据库中的下划线命名字段（如 user_name）自动转换为 Java 类中的驼峰命名字段（如 userName），简化数据映射过程。
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com:
+      reggie:
+        # 表示 com.reggie.mapper 包及其子包下的日志级别为 debug，会输出调试信息
+        mapper: debug
+        # 表示 com.reggie.service 包及其子包下的日志级别为 info，会输出信息级别的日志
+        service: info
+        # info 表示 com.reggie.controller 包及其子包下的日志级别为 info，会输出信息级别的日志。
+        controller: info
+
+reggie:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    admin-secret-key: itcast
+    # 设置jwt过期时间
+    admin-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    admin-token-name: token
+    # 设置jwt签名加密时使用的秘钥
+    user-secret-key: itheima
+    # 设置jwt过期时间
+    user-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    user-token-name: authentication
+  alioss:
+    endpoint: ${reggie.alioss.endpoint}
+    access-key-id: ${reggie.alioss.access-key-id}
+    access-key-secret: ${reggie.alioss.access-key-secret}
+    bucket-name: ${reggie.alioss.bucket-name}
+  wechat:
+    appid: ${reggie.wechat.appid}
+    secret: ${reggie.wechat.secret}
