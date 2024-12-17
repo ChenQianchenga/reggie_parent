@@ -1,4 +1,4 @@
-package com.reggie.context;
+package com.reggie.constant;
 
 /**
  * 状态常量，启用或者禁用

@@ -1,4 +1,4 @@
-package com.reggie.context;
+package com.reggie.constant;
 
 /**
  * 信息提示常量类

@@ -1,4 +1,4 @@
-package com.reggie.context;
+package com.reggie.constant;
 
 /**
  * 密码常量

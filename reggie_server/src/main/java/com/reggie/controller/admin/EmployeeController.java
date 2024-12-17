@@ -4,8 +4,10 @@ import com.reggie.annotation.IgnoreToken;
 import com.reggie.constant.JwtClaimsConstant;
 import com.reggie.dto.EmployeeDTO;
 import com.reggie.dto.EmployeeLoginDTO;
+import com.reggie.dto.EmployeePageQueryDTO;
 import com.reggie.entity.Employee;
 import com.reggie.properties.JwtProperties;
+import com.reggie.result.PageResult;
 import com.reggie.result.R;
 import com.reggie.service.Impl.EmployeeServiceImpl;
 import com.reggie.utils.JwtUtil;
@@ -80,11 +82,29 @@ public class EmployeeController {
         return R.success("退出登录");
     }
 
+    /**
+     * 员工注册
+     * @param employeeDTO 获取添加员工的表单
+     * @return 返回Success
+     */
     @PostMapping
     @ApiOperation("员工注册")
     public R<String> add(@RequestBody EmployeeDTO employeeDTO){
         log.info("新增员工：{}",employeeDTO);
         employeeService.save(employeeDTO);
         return R.success();
+    }
+    /**
+     * 员工信息查询接口
+     *
+     * @param employeePageQueryDTO (name,page,pageSize)
+     * @return (total - 总记录数, records - 当前页数据集合)
+     */
+    @GetMapping("/page")
+    @ApiOperation("员工信息查询接口")
+    public R<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
+        log.info("查询员工：{}",employeePageQueryDTO);
+        PageResult pageResult = employeeService.PageQuery(employeePageQueryDTO);
+        return R.success(pageResult);
     }
 }
