@@ -1,12 +1,17 @@
 package com.reggie.controller.admin;
 
+import com.reggie.annotation.IgnoreToken;
+import com.reggie.dto.EmployeeLoginDTO;
+import com.reggie.entity.Employee;
+import com.reggie.properties.JwtProperties;
 import com.reggie.result.R;
+import com.reggie.service.Impl.EmployeeServiceImpl;
+import com.reggie.vo.EmployeeLoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/employee")
@@ -20,6 +25,31 @@ import org.springframework.web.bind.annotation.RestController;
 //value: 与 tags 属性功能相同，可以互换使用。
 @Api(tags = "员工相关接口")
 public class EmployeeController {
+    @Autowired
+    private EmployeeServiceImpl employeeService;
+
+    @Autowired
+    private JwtProperties jwtProperties; //jwt令牌相关配置类
+
+    /**
+     * 测试用于测试jwt校验
+     * @return
+     */
+    @ApiOperation("Jwt测试接口")
+    @IgnoreToken //自定义放行拦截注解
+    @GetMapping("/testJwt")
+    public R<String> testJwt(){
+        return R.success("jwt test");
+    }
+    @PostMapping("login")
+    @ApiOperation("员工登录接口")
+    public R<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO){
+        log.info("员工登录：用户名：{}，密码：{}",employeeLoginDTO.getUsername(),employeeLoginDTO.getPassword());
+        //调用业务登陆返回对象
+        Employee employeeLogin = employeeService.login(employeeLoginDTO);
+        return null;
+    }
+
     /**
      * 员工退出
      *

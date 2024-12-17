@@ -26,6 +26,8 @@ mybatis:
   configuration:
     #开启驼峰命名 将数据库中的下划线命名字段（如 user_name）自动转换为 Java 类中的驼峰命名字段（如 userName），简化数据映射过程。
     map-underscore-to-camel-case: true
+    # 指定mybatis输出日志的位置, 输出控制台
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 logging:
   level:

@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.annotation.Validated;
-
+//http://localhost:8081/#/login  管理系统前端
 @ServletComponentScan //开启servlet组件支持
 @SpringBootApplication // 整合MyBatis
 @EnableTransactionManagement // 开启事务管理
