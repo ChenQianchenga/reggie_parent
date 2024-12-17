@@ -1,17 +1,21 @@
 package com.reggie.controller.admin;
 
 import com.reggie.annotation.IgnoreToken;
+import com.reggie.constant.JwtClaimsConstant;
 import com.reggie.dto.EmployeeLoginDTO;
 import com.reggie.entity.Employee;
 import com.reggie.properties.JwtProperties;
 import com.reggie.result.R;
 import com.reggie.service.Impl.EmployeeServiceImpl;
+import com.reggie.utils.JwtUtil;
 import com.reggie.vo.EmployeeLoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/admin/employee")
@@ -47,7 +51,20 @@ public class EmployeeController {
         log.info("员工登录：用户名：{}，密码：{}",employeeLoginDTO.getUsername(),employeeLoginDTO.getPassword());
         //调用业务登陆返回对象
         Employee employeeLogin = employeeService.login(employeeLoginDTO);
-        return null;
+        //设置jwt中有效载荷部分的数据，通常是用户的身份标识
+        HashMap<String,Object> claims = new HashMap<>();
+        claims.put(JwtClaimsConstant.EMP_ID, employeeLogin.getId());
+
+        //创建jwt令牌
+        String token = JwtUtil.createJWT(jwtProperties.getAdminSecretKey(),jwtProperties.getAdminTtl(),claims);
+        //封装响应对象
+        EmployeeLoginVO employeeLoginVO = EmployeeLoginVO.builder()
+                .id(employeeLogin.getId())
+                .name(employeeLogin.getName())
+                .userName(employeeLogin.getUsername())
+                .token(token)
+                .build();
+        return R.success(employeeLoginVO);
     }
 
     /**
