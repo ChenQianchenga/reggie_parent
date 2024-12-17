@@ -2,6 +2,7 @@ package com.reggie.controller.admin;
 
 import com.reggie.annotation.IgnoreToken;
 import com.reggie.constant.JwtClaimsConstant;
+import com.reggie.dto.EmployeeDTO;
 import com.reggie.dto.EmployeeLoginDTO;
 import com.reggie.entity.Employee;
 import com.reggie.properties.JwtProperties;
@@ -77,5 +78,13 @@ public class EmployeeController {
     public R<String> logout() {
         log.info("员工退出");
         return R.success("退出登录");
+    }
+
+    @PostMapping
+    @ApiOperation("员工注册")
+    public R<String> add(@RequestBody EmployeeDTO employeeDTO){
+        log.info("新增员工：{}",employeeDTO);
+        employeeService.save(employeeDTO);
+        return R.success();
     }
 }

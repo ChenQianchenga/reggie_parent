@@ -71,14 +71,14 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
     //目标资源方法执行后执行
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        System.out.println("postHandle ... ");
+        log.info("postHandle ... ");
         BaseContext.removeCurrentId();
     }
 
     //视图渲染完毕后执行，最后执行
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        System.out.println("afterCompletion .... ");
+        log.info("afterCompletion .... ");
     }
 
 }
