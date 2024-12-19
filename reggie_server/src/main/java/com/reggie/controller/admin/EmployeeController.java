@@ -2,10 +2,12 @@ package com.reggie.controller.admin;
 
 import com.reggie.annotation.IgnoreToken;
 import com.reggie.constant.JwtClaimsConstant;
+import com.reggie.constant.ValidationMessageConstant;
 import com.reggie.dto.EmployeeDTO;
 import com.reggie.dto.EmployeeLoginDTO;
 import com.reggie.dto.EmployeePageQueryDTO;
 import com.reggie.entity.Employee;
+import com.reggie.exception.ValidationException;
 import com.reggie.properties.JwtProperties;
 import com.reggie.result.PageResult;
 import com.reggie.result.R;
@@ -40,26 +42,28 @@ public class EmployeeController {
 
     /**
      * 测试用于测试jwt校验
+     *
      * @return
      */
     @ApiOperation("Jwt测试接口")
     @IgnoreToken //自定义放行拦截注解
     @GetMapping("/testJwt")
-    public R<String> testJwt(){
+    public R<String> testJwt() {
         return R.success("jwt test");
     }
+
     @PostMapping("login")
     @ApiOperation("员工登录接口")
-    public R<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO){
-        log.info("员工登录：用户名：{}，密码：{}",employeeLoginDTO.getUsername(),employeeLoginDTO.getPassword());
+    public R<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
+        log.info("员工登录：用户名：{}，密码：{}", employeeLoginDTO.getUsername(), employeeLoginDTO.getPassword());
         //调用业务登陆返回对象
         Employee employeeLogin = employeeService.login(employeeLoginDTO);
         //设置jwt中有效载荷部分的数据，通常是用户的身份标识
-        HashMap<String,Object> claims = new HashMap<>();
+        HashMap<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.EMP_ID, employeeLogin.getId());
 
         //创建jwt令牌
-        String token = JwtUtil.createJWT(jwtProperties.getAdminSecretKey(),jwtProperties.getAdminTtl(),claims);
+        String token = JwtUtil.createJWT(jwtProperties.getAdminSecretKey(), jwtProperties.getAdminTtl(), claims);
         //封装响应对象
         EmployeeLoginVO employeeLoginVO = EmployeeLoginVO.builder()
                 .id(employeeLogin.getId())
@@ -84,16 +88,18 @@ public class EmployeeController {
 
     /**
      * 员工注册
+     *
      * @param employeeDTO 获取添加员工的表单
      * @return 返回Success
      */
     @PostMapping
     @ApiOperation("员工注册")
-    public R<String> add(@RequestBody EmployeeDTO employeeDTO){
-        log.info("新增员工：{}",employeeDTO);
+    public R<String> add(@RequestBody EmployeeDTO employeeDTO) {
+        log.info("新增员工：{}", employeeDTO);
         employeeService.save(employeeDTO);
         return R.success();
     }
+
     /**
      * 员工信息查询接口
      *
@@ -102,9 +108,32 @@ public class EmployeeController {
      */
     @GetMapping("/page")
     @ApiOperation("员工信息查询接口")
-    public R<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
-        log.info("查询员工：{}",employeePageQueryDTO);
+    public R<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO) {
+        log.info("查询员工：{}", employeePageQueryDTO);
         PageResult pageResult = employeeService.PageQuery(employeePageQueryDTO);
         return R.success(pageResult);
     }
+
+    /**
+     * 启用、禁用员工状态
+     *
+     * @param status 状态
+     * @param id     员工id
+     * @return
+     */
+    @PostMapping("status/{status}")
+    @ApiOperation("启用、禁用员工")
+    public R<String> startOrStop(@PathVariable Integer status, @RequestParam Long id) {
+        log.info("启用、禁用员工状态：{}，{}", status, id);
+        //参数校验
+        // 参数校验
+        if (status == null || (status != 0 && status != 1)) {
+            throw new ValidationException(ValidationMessageConstant.INVALID_PARAMETER);
+        }
+
+        employeeService.startOrStop(status, id);
+        return R.success("状态更新成功");
+    }
+
+
 }

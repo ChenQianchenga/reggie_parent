@@ -34,7 +34,7 @@
 
 
     <!--员工状态修改-->
-    <update id="updateStartusById">
+    <update id="updateStatusById">
         update employee
         set status      = #{status},
         update_user = #{updateUser},

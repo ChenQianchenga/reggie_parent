@@ -24,4 +24,13 @@ public interface EmployeeMapper {
     void save(Employee employee);
     //分页查询功能
     Page<Employee> PageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+    @AutoFill(type = AutoFillConstant.UPDATE)
+    int updateStatusById(Employee employee);
+
+    /**
+     * 根据id查询员工
+     * @param id 员工id
+     * @return 员工对象
+     */
+    Employee getById(Long id);
 }

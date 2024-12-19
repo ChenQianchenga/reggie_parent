@@ -1,7 +1,7 @@
 package com.reggie.service.Impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.reggie.context.BaseContext;
+import static com.reggie.constant.MessageConstant.*;
 import com.reggie.constant.MessageConstant;
 import com.reggie.constant.PasswordConstant;
 import com.reggie.constant.StatusConstant;
@@ -11,6 +11,7 @@ import com.reggie.dto.EmployeePageQueryDTO;
 import com.reggie.entity.Employee;
 import com.reggie.exception.AccountLockedException;
 import com.reggie.exception.AccountNotFoundException;
+import com.reggie.exception.BaseException;
 import com.reggie.exception.PasswordErrorException;
 import com.reggie.mapper.EmployeeMapper;
 import com.reggie.result.PageResult;
@@ -36,18 +37,18 @@ public class EmployeeServiceImpl implements EmployeeService {
         //用户不存在
         if (employee == null){
             //抛出自定义的异常(账号不存在)
-            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+            throw new AccountNotFoundException();
         }
         //账号锁定
         if (employee.getStatus() == StatusConstant.DISABLE){
             //抛出账号锁定异常
-            throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
+            throw new AccountLockedException();
         }
         //密码错误
         //对前端传递过来的明文密码进行md5加密处理
         String pwd = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!pwd.equals(employee.getPassword())){
-            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+            throw new PasswordErrorException();
         }
         return employee;
     }
@@ -85,5 +86,27 @@ public class EmployeeServiceImpl implements EmployeeService {
         //返回封装PageResult对象
         PageResult pageResult = new PageResult(page.getTotal(),page.getResult());
         return pageResult;
+    }
+    //账号的启用和禁用
+    public void startOrStop(Integer status, Long id) {
+
+        // 检查员工是否存在
+        Employee existingEmployee = employeeMapper.getById(id);
+        if (existingEmployee == null) {
+            throw new BaseException("未找到对应的员工记录，ID: " + id);
+        }
+        Employee employee = new Employee();
+        //设置员工状态
+        employee.setStatus(status);
+        //设置员工id
+        employee.setId(id);
+        try {
+            int rowsUpdated = employeeMapper.updateStatusById(employee); // 更新状态
+            if (rowsUpdated == 0) {
+                throw new BaseException("更新失败，可能是记录不存在或状态未修改");
+            }
+        } catch (Exception e) {
+            throw new BaseException("更新员工状态时发生异常");
+        }
     }
 }

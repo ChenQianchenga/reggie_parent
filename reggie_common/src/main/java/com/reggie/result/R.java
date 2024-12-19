@@ -35,4 +35,11 @@ public class R<T> implements Serializable {
         return r;
     }
 
+    public static <T> R<T> error(Integer code,String msg) {
+        R r = new R();
+        r.msg = msg;
+        r.code = code;
+        return r;
+    }
+
 }
