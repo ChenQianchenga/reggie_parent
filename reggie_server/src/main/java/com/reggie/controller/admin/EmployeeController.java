@@ -6,6 +6,7 @@ import com.reggie.constant.ValidationMessageConstant;
 import com.reggie.dto.EmployeeDTO;
 import com.reggie.dto.EmployeeLoginDTO;
 import com.reggie.dto.EmployeePageQueryDTO;
+import com.reggie.dto.PasswordEditDTO;
 import com.reggie.entity.Employee;
 import com.reggie.exception.ValidationException;
 import com.reggie.properties.JwtProperties;
@@ -133,6 +134,44 @@ public class EmployeeController {
 
         employeeService.startOrStop(status, id);
         return R.success("状态更新成功");
+    }
+    /**
+     * 根据id查询员工
+     *
+     * @return 员工对象
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询员工接口")
+    public R<Employee> getById(@PathVariable long id){
+        log.info("根据id查询员工：{}",id);
+        return R.success(employeeService.getById(id));
+    }
+
+    /**
+     * 编辑员工信息
+     *
+     * @return success
+     */
+    @PutMapping
+    @ApiOperation("编辑员工信息接口")
+    public R<String> update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("编辑员工信息：{}",employeeDTO);
+        employeeService.update(employeeDTO);
+        return R.success("修改成功");
+    }
+
+    /**
+     * 员工修改密码
+     * @param passwordEditDTO 修改密码
+     * @return success
+     */
+    @PutMapping("/editPassword")
+    @ApiOperation("员工密码修改")
+    public R<String> editPassword(@RequestBody PasswordEditDTO passwordEditDTO){
+        log.info("员工修改密码：{}",passwordEditDTO);
+        employeeService.editPassword(passwordEditDTO);
+        return R.success("修改成功");
+
     }
 
 

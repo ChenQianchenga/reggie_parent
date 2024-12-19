@@ -5,9 +5,11 @@ import static com.reggie.constant.MessageConstant.*;
 import com.reggie.constant.MessageConstant;
 import com.reggie.constant.PasswordConstant;
 import com.reggie.constant.StatusConstant;
+import com.reggie.context.BaseContext;
 import com.reggie.dto.EmployeeDTO;
 import com.reggie.dto.EmployeeLoginDTO;
 import com.reggie.dto.EmployeePageQueryDTO;
+import com.reggie.dto.PasswordEditDTO;
 import com.reggie.entity.Employee;
 import com.reggie.exception.AccountLockedException;
 import com.reggie.exception.AccountNotFoundException;
@@ -108,5 +110,49 @@ public class EmployeeServiceImpl implements EmployeeService {
         } catch (Exception e) {
             throw new BaseException("更新员工状态时发生异常");
         }
+    }
+
+    @Override
+    public Employee getById(long id) {
+        return employeeMapper.getById(id);
+    }
+
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        //对象拷贝
+        BeanUtils.copyProperties(employeeDTO,employee);
+        //更新数据库
+        employeeMapper.update(employee);
+
+    }
+
+    @Override
+    public void editPassword(PasswordEditDTO passwordEditDTO) {
+        String oldPassword = passwordEditDTO.getOldPassword();
+        String newPassword = passwordEditDTO.getNewPassword();
+        //根据token获取当前用户id
+        long empId = BaseContext.getCurrentId();
+
+        //通过员工id查询当前对象
+        Employee employee = employeeMapper.getById(empId);
+        //判断对象是否为空
+        if (employee == null){
+            throw new PasswordErrorException();
+        }
+        //对旧密码明文进行md5
+        oldPassword = DigestUtils.md5DigestAsHex(oldPassword.getBytes());
+        //判断旧密码是否正确
+        if (!employee.getPassword().equals(oldPassword)){
+            throw new PasswordErrorException();
+        }
+        //对新密码明文进行MD5
+        newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
+        Employee emp = Employee.builder()
+                .id(empId)
+                .password(newPassword).build();
+        employeeMapper.update(emp);
+
+
     }
 }

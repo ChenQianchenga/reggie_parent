@@ -33,4 +33,11 @@ public interface EmployeeMapper {
      * @return 员工对象
      */
     Employee getById(Long id);
+
+    /**
+     * 更新员工信息
+     * @param employee 员工信息
+     */
+    @AutoFill(type = AutoFillConstant.UPDATE)
+    void update(Employee employee);
 }
